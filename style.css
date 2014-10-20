@@ -1,0 +1,39 @@
+html{height:100%;position:relative}/* make sure it is at least as tall as the viewport */
+body{background-color: #000;}
+#myslides{
+    position:absolute !important;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:-1
+}
+
+.bg{
+	height: 100%;
+	width:100%;
+	 -webkit-background-size:cover !important; -moz-background-size:cover !important; -o-background-size:cover !important; background-size:cover !important;
+}
+
+.container{ 	
+	font-family: "futura-pt", sans-serif;
+	background-color: rgba(0,0,0,0.8);
+	
+	color: white;
+	text-align: center;
+	vertical-align: middle;
+	
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+}
+
+.title{
+	font-size: 9vw;
+	padding-bottom: 12px;
+}
+
+.date{
+	font-size: 5vw;
+	padding-bottom: 28px;
+}
