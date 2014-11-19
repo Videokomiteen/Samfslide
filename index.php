@@ -9,36 +9,39 @@
     <div id="myslides">
     	<?php
 
-        $rss = file_get_contents("http://www.samfundet.no/arrangement/rss");
-        $rss = str_replace("&aring;", "aaringe",$rss);                          //super quick-fix for xml parse-error! burde gjøre så xml ikke bryr seg om data. se CDATA
+        $rss = file_get_contents("https://www.samfundet.no/rss");
+        $rss = str_replace("&", "",$rss);                          //super quick-fix for xml parse-error! burde gjøre så xml ikke bryr seg om data. se CDATA
     	$xml = simplexml_load_string($rss);
+    	$arr=array();
+
+    	foreach($xml->channel->item as $event){
+		    $arr[]=$event;
+		}
+
+		usort($arr,function($a,$b){
+		    return strtotime($a->pubDate)-strtotime($b->pubDate);
+		});
 
     	//Henter ut info fra RSS
         $i=0;
-    	foreach($xml->channel->item as $event){
-    		$title = explode(" ", $event->title);
-    		//$beskrivelse = $event->description;
-    		//$kategori = $event->category;
-    		$dato = explode(" ", $event->pubDate);										
-    		$dato = $dato[1] . ". " . $dato[2];
-    		$dag = $title[0];
+    	foreach($arr as $event){
+    		$title = $event->title;
+            $title = str_replace("amp;", "&", $title);
+    		$dato = strtotime($event->pubDate);										
             $location = $event->location;
-            $tid = str_replace(".",":",$title[1]);
-    		$bilde = explode(" ",$event->link[1]["href"]);
-    		$bilde = split("_",$bilde[0]);
-    		$bilde = $bilde[0].".jpg";
-    		$header = '';
+            $tid = str_replace(".",":",$dato[4]);
+    		$bilde = $event->link[1]["href"];
+    		//$bilde = split("_",$bilde[0]);
+    		//$bilde = $bilde[0].".jpg";
             $color = '#' . strtoupper(dechex(rand(100,200)).dechex(rand(100,200)).dechex(rand(100,200)));
-    		for($i = 3; $i<count($title); $i++) $header .= $title[$i] . ' ';
-    		$header=trim($header);
-    		//echo("<!--"); print_r($event); echo("-->");
+    		//echo("<!--"); print_r($bilde); echo("-->");
 
     		$out='<div class="bg" style="background: url('.$bilde.') no-repeat center center fixed;"/>
             ';
     		$out.='    <div class="container">
-                    <div class="title" style="color:'.$color.';">'.$header."</div>
+                    <div class="title" style="color:'.$color.';">'.$title."</div>
             ";
-            $out .='        <div class="date">'.$dag." ".$dato." - ".$tid." ".$location."</div>
+            $out .='        <div class="date">'.date("D j. M - H:i", $dato)." ".$location."</div>
             ";
     		$out .="    </div>
             </div>
